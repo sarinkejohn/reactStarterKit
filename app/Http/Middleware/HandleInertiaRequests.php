@@ -41,12 +41,14 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'flash' => ['message'=> fn()=> $request->session()->get('message')],
+            'flash' => ['message' => fn() => $request->session()->get('message')],
             // Proper Ziggy integration
-            // 'ziggy' => fn() => [
-            //     ...(new Ziggy)->toArray(),
-            //     'location' => $request->url(),
-            // ]
+            'ziggy' => function () use ($request) {
+            return array_merge((new Ziggy)->toArray(), [
+                'location' => $request->url(),
+            ]);
+        },
         ];
     }
 }
+

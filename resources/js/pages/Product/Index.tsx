@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Megaphone } from 'lucide-react';
+import { route } from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,7 +13,8 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/products',
     },
 ];
-interface Products {
+
+interface Product {
     id: number;
     name: string;
     price: number;
@@ -23,29 +25,29 @@ interface PageProps {
     flash?: {
         message?: string;
     };
-    products: Products[];
+    products: Product[];
 }
 
 export default function Index() {
     const { products, flash } = usePage().props as unknown as PageProps;
-    const { processing, delete: destroy } = useForm();
+    const { processing } = useForm();
 
     const handleDelete = (id: number, name: string) => {
-        if (confirm(`Do you want to delete a product - ${id} ${name}`)) {
-            destroy(`/product/${id}`);
+        if (confirm(`Do you want to delete product - ${id} ${name}?`)) {
+            router.delete(route('products.destroy', { product: id }));
         }
     };
-    const handleEditing = (id: number)=>{
-        router.get(`/products/${id}/edit`);
-        console.log('data');
-    }
+
+    const handleEditing = (id: number) => {
+        router.get(route('products.edit', { product: id }));
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
 
             <div className="m-4">
-                <Link href="/products/create">
+                <Link href={route('products.create')}>
                     <Button>Create a Product</Button>
                 </Link>
             </div>
@@ -60,7 +62,7 @@ export default function Index() {
                     )}
                 </div>
             </div>
-            {products.length > 0 && (
+            {products.length > 0 ? (
                 <div className="m-4">
                     <Table>
                         <TableCaption>A list of your recent products.</TableCaption>
@@ -73,16 +75,21 @@ export default function Index() {
                                 <TableHead className="text-center">ACTION</TableHead>
                             </TableRow>
                         </TableHeader>
-                        {products.map((product) => (
-                            <TableBody key={product.id}>
-                                <TableRow>
+                        <TableBody>
+                            {products.map((product) => (
+                                <TableRow key={product.id}>
                                     <TableCell className="font-medium">{product.id}</TableCell>
                                     <TableCell>{product.name}</TableCell>
                                     <TableCell>{product.price}</TableCell>
                                     <TableCell>{product.description}</TableCell>
                                     <TableCell className="text-center">
                                         <div className="flex justify-center gap-2">
-                                            <Button onClick={()=>handleEditing(product.id)} size="sm" variant="default" className="hover:bg-green-100">
+                                            <Button 
+                                                onClick={() => handleEditing(product.id)} 
+                                                size="sm" 
+                                                variant="default" 
+                                                className="hover:bg-green-100"
+                                            >
                                                 Edit
                                             </Button>
                                             <Button
@@ -97,9 +104,13 @@ export default function Index() {
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                            </TableBody>
-                        ))}
+                            ))}
+                        </TableBody>
                     </Table>
+                </div>
+            ) : (
+                <div className="m-4 text-center">
+                    <p>No products found.</p>
                 </div>
             )}
         </AppLayout>
