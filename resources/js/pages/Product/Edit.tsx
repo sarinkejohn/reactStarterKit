@@ -7,6 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { CircleAlert } from 'lucide-react';
+import { route } from 'ziggy-js';
 // import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -47,11 +48,7 @@ export default function Edit() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/product/${data.id}`, {
-            // onSuccess: () => {
-            //     setSuccessMessage('Product updated successfully!');
-            // },
-        });
+        put(route('products.update'));
     };
 
     return (

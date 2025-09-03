@@ -7,6 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { CircleAlert } from 'lucide-react';
+import { route } from 'ziggy-js';
 // import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -32,12 +33,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/product/store', {
-            // onSuccess: () => {
-            //     setSuccessMessage('Product added successfully!');
-            //     setData({ name: '', price: '', description: '' }); // reset form
-            // },
-        });
+        post(route("product.store"));
     };
 
     return (
